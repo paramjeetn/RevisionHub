@@ -35,7 +35,7 @@ export default function App() {
       const data = await getAllPDFs()
       setPdfs(data)
     } catch (error) {
-      alert("Error loading PDFs: " + error.message)
+      alert("Error loading documents: " + error.message)
     } finally {
       setLoading(false)
     }
@@ -45,8 +45,14 @@ export default function App() {
     const file = e.target.files?.[0]
     if (!file) return
 
-    if (file.type !== "application/pdf") {
-      alert("Please upload a PDF file")
+    const validMimeTypes = [
+      "application/pdf",
+      "application/msword", // .doc
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document" // .docx
+    ]
+
+    if (!validMimeTypes.includes(file.type)) {
+      alert("Please upload a PDF, DOC, or DOCX file")
       return
     }
 
@@ -167,7 +173,7 @@ export default function App() {
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-secondary/50 rounded-lg p-3 border border-border">
                 <div className="text-2xl font-bold text-foreground">{stats.total}</div>
-                <div className="text-xs text-muted-foreground">Total PDFs</div>
+                <div className="text-xs text-muted-foreground">Total Documents</div>
               </div>
               <div className="bg-destructive/5 rounded-lg p-3 border border-destructive/20">
                 <div className="text-2xl font-bold text-destructive">{stats.high}</div>
@@ -185,7 +191,7 @@ export default function App() {
               </div>
 
               <label className="group relative flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-border rounded-xl cursor-pointer hover:border-primary hover:bg-primary/5 transition-all duration-300">
-                <input type="file" accept=".pdf" onChange={handleFileUpload} disabled={uploading} className="hidden" />
+                <input type="file" accept=".pdf,.doc,.docx" onChange={handleFileUpload} disabled={uploading} className="hidden" />
                 <div className="text-center">
                   {uploading ? (
                     <div className="flex flex-col items-center">
@@ -198,10 +204,10 @@ export default function App() {
                       <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform">
                         <Upload className="w-6 h-6 text-primary" />
                       </div>
-                      <p className="text-sm font-medium text-foreground mb-1">Drop your PDF here</p>
+                      <p className="text-sm font-medium text-foreground mb-1">Drop your document here</p>
                       <p className="text-xs text-muted-foreground">or click to browse</p>
                       <div className="mt-3 px-3 py-1 bg-secondary rounded-full text-xs text-muted-foreground">
-                        PDF files only
+                        PDF, DOC, DOCX files
                       </div>
                     </>
                   )}
@@ -245,12 +251,12 @@ export default function App() {
                 <FileText className="w-10 h-10 text-primary" />
               </div>
               <h3 className="text-2xl font-bold text-foreground mb-2">No materials yet</h3>
-              <p className="text-muted-foreground mb-6">Upload your first PDF to get started</p>
+              <p className="text-muted-foreground mb-6">Upload your first document to get started</p>
               <button
                 onClick={() => setSidebarOpen(true)}
                 className="px-6 py-3 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl font-medium transition-all shadow-lg hover:shadow-xl"
               >
-                Upload PDF
+                Upload Document
               </button>
             </div>
           ) : (

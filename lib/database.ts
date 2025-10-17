@@ -4,6 +4,7 @@ export interface PDF {
   id: string
   filename: string
   storage_path: string
+  file_type?: string
   date_added: string
   last_revised: string
   revisions: number
@@ -48,7 +49,7 @@ export async function uploadPDF(file: File): Promise<PDF> {
     const { error: storageError } = await supabase.storage
       .from('pdfs')
       .upload(storagePath, file, {
-        contentType: 'application/pdf'
+        contentType: file.type
       })
 
     if (storageError) throw storageError
@@ -59,6 +60,7 @@ export async function uploadPDF(file: File): Promise<PDF> {
       .insert({
         filename: file.name,
         storage_path: storagePath,
+        file_type: file.type,
         date_added: new Date().toISOString(),
         last_revised: new Date().toISOString(),
         revisions: 0,
